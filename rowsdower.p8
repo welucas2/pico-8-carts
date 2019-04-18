@@ -14,6 +14,8 @@ rowsdower.y = 20
 rowsdower.width = 16
 rowsdower.height = 16
 
+character_speed = 1
+
 enemies = {}
 sprite_ref = {}
 sprite_ref.c = 32
@@ -33,6 +35,18 @@ function draw_enemies()
  end
 end
 
+function move_rowsdower()
+ if btn(0) then
+  rowsdower.x -= character_speed
+ elseif btn(1) then
+  rowsdower.x += character_speed
+ elseif btn(2) then
+  rowsdower.y -= character_speed
+ elseif btn(3) then
+  rowsdower.y += character_speed
+ end
+end
+
 function init_level(level_number)
  if level_number == 1 then
   enemies[1] = init_cultist()
@@ -47,11 +61,12 @@ function _init()
 end
 
 function _update()
+ move_rowsdower()
 end
 
 function _draw()
  cls()
- rectfill(0, 0, 128, 120, 3)
+ rectfill(field.minx, field.miny, field.maxx, field.maxy, 3)
  rectfill(0, 121, 128, 128, 0)
  print('fight, rowsdower!', 2, 122, 12)
  spr(0, rowsdower.x, rowsdower.y, 2, 2)
