@@ -13,6 +13,7 @@ rowsdower.x = 20
 rowsdower.y = 20
 rowsdower.width = 16
 rowsdower.height = 16
+rowsdower.flip = false
 
 character_speed = 1
 
@@ -25,6 +26,7 @@ function init_cultist(x,y)
  cultist.type = 'c'
  cultist.x = x
  cultist.y = y
+ cultist.flip = false
  cultist.width = 16
  cultist.height = 16
  cultist.health = 20
@@ -33,7 +35,7 @@ end
 
 function draw_enemies()
  for i, enemy in pairs(enemies) do
-  spr(sprite_ref[enemy.type], enemy.x, enemy.y, 2, 2)
+  spr(sprite_ref[enemy.type],enemy.x,enemy.y,2,2,enemy.flip)
  end
 end
 
@@ -57,22 +59,29 @@ function move_enemies()
  for i, enemy in pairs(enemies) do
   local dx = rowsdower.x - enemy.x
   local dy = rowsdower.y - enemy.y
-  local drowsdower = sqrt(dx*dx + dy*dy)
+  local drowsdower = sqrt(dx*dx + dy*dy) + 0.001
   dx = character_speed * dx / drowsdower
   dy = character_speed * dy / drowsdower
   if dx ~= 0 or dy ~= 0 then
     move_character(enemy,dx,dy)
-   end
+  end
  end
 end
 
 function move_character(character, dx, dy)
+ --Move the character then check they're still in bound.
  character.x += dx
  character.y += dy
  character.x = max(character.x, field.minx)
  character.x = min(character.x, field.maxx-character.width)
  character.y = max(character.y, field.miny)
  character.y = min(character.y, field.maxy-character.height)
+ --Flip sprite if necessary
+ if dx < 0 then
+  character.flip=true
+ elseif dx > 0 then
+  character.flip=false
+ end
 end
 
 function init_level(level_number)
@@ -98,7 +107,7 @@ function _draw()
  rectfill(field.minx, field.miny, field.maxx, field.maxy, 3)
  rectfill(0, 121, 128, 128, 0)
  print('fight, rowsdower!', 2, 122, 12)
- spr(0, rowsdower.x, rowsdower.y, 2, 2)
+ spr(0,rowsdower.x,rowsdower.y,2,2,rowsdower.flip)
  draw_enemies()
 end
 
