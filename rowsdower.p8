@@ -55,13 +55,11 @@ end
 
 function move_enemies()
  for i, enemy in pairs(enemies) do
-  local dxr = rowsdower.x - enemy.x
-  local dyr = rowsdower.y - enemy.y
-  local drowsdower = sqrt(dxr*dxr + dyr*dyr)
-  dxr = dxr / drowsdower
-  dyr = dyr / drowsdower
-  local dx = character_speed * dxr
-  local dy = character_speed * dyr
+  local dx = rowsdower.x - enemy.x
+  local dy = rowsdower.y - enemy.y
+  local drowsdower = sqrt(dx*dx + dy*dy)
+  dx = character_speed * dx / drowsdower
+  dy = character_speed * dy / drowsdower
   if dx ~= 0 or dy ~= 0 then
     move_character(enemy,dx,dy)
    end
