@@ -45,6 +45,10 @@ function move_rowsdower()
  elseif btn(3) then
   rowsdower.y += character_speed
  end
+ rowsdower.x = max(rowsdower.x, field.minx)
+ rowsdower.x = min(rowsdower.x, field.maxx-rowsdower.width)
+ rowsdower.y = max(rowsdower.y, field.miny)
+ rowsdower.y = min(rowsdower.y, field.maxy-rowsdower.height)
 end
 
 function init_level(level_number)
