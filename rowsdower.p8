@@ -2,9 +2,17 @@ pico-8 cartridge // http://www.pico-8.com
 version 16
 __lua__
 
+field = {}
+field.minx = 0
+field.miny = 0
+field.maxx = 128
+field.maxy = 120
+
 rowsdower = {}
 rowsdower.x = 20
 rowsdower.y = 20
+rowsdower.width = 16
+rowsdower.height = 16
 
 enemies = {}
 sprite_ref = {}
