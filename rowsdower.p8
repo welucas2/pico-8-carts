@@ -59,7 +59,7 @@ function move_enemies()
  for i, enemy in pairs(enemies) do
   local dx = rowsdower.x - enemy.x
   local dy = rowsdower.y - enemy.y
-  local drowsdower = sqrt(dx*dx + dy*dy)
+  local drowsdower = sqrt(dx*dx + dy*dy) + 0.001
   dx = character_speed * dx / drowsdower
   dy = character_speed * dy / drowsdower
   if dx ~= 0 or dy ~= 0 then
@@ -69,15 +69,17 @@ function move_enemies()
 end
 
 function move_character(character, dx, dy)
+ --Move the character then check they're still in bound.
  character.x += dx
  character.y += dy
  character.x = max(character.x, field.minx)
  character.x = min(character.x, field.maxx-character.width)
  character.y = max(character.y, field.miny)
  character.y = min(character.y, field.maxy-character.height)
+ --Flip sprite if necessary
  if dx < 0 then
   character.flip=true
- else
+ elseif dx > 0 then
   character.flip=false
  end
 end
