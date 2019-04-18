@@ -2,9 +2,19 @@ pico-8 cartridge // http://www.pico-8.com
 version 16
 __lua__
 
+field = {}
+field.minx = 0
+field.miny = 0
+field.maxx = 128
+field.maxy = 120
+
 rowsdower = {}
 rowsdower.x = 20
 rowsdower.y = 20
+rowsdower.width = 16
+rowsdower.height = 16
+
+character_speed = 1
 
 enemies = {}
 sprite_ref = {}
@@ -25,6 +35,31 @@ function draw_enemies()
  end
 end
 
+function move_rowsdower()
+ local dx, dy = 0, 0
+ if btn(0) then
+  dx = -character_speed
+ elseif btn(1) then
+  dx = character_speed
+ elseif btn(2) then
+  dy = -character_speed
+ elseif btn(3) then
+  dy = character_speed
+ end
+ if dx ~= 0 or dy ~= 0 then
+  move_character(rowsdower,dx,dy)
+ end
+end
+
+function move_character(character, dx, dy)
+ character.x += dx
+ character.y += dy
+ character.x = max(character.x, field.minx)
+ character.x = min(character.x, field.maxx-character.width)
+ character.y = max(character.y, field.miny)
+ character.y = min(character.y, field.maxy-character.height)
+end
+
 function init_level(level_number)
  if level_number == 1 then
   enemies[1] = init_cultist()
@@ -39,11 +74,12 @@ function _init()
 end
 
 function _update()
+ move_rowsdower()
 end
 
 function _draw()
  cls()
- rectfill(0, 0, 128, 120, 3)
+ rectfill(field.minx, field.miny, field.maxx, field.maxy, 3)
  rectfill(0, 121, 128, 128, 0)
  print('fight, rowsdower!', 2, 122, 12)
  spr(0, rowsdower.x, rowsdower.y, 2, 2)
