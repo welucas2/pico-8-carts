@@ -36,19 +36,28 @@ function draw_enemies()
 end
 
 function move_rowsdower()
+ local dx, dy = 0, 0
  if btn(0) then
-  rowsdower.x -= character_speed
+  dx = -character_speed
  elseif btn(1) then
-  rowsdower.x += character_speed
+  dx = character_speed
  elseif btn(2) then
-  rowsdower.y -= character_speed
+  dy = -character_speed
  elseif btn(3) then
-  rowsdower.y += character_speed
+  dy = character_speed
  end
- rowsdower.x = max(rowsdower.x, field.minx)
- rowsdower.x = min(rowsdower.x, field.maxx-rowsdower.width)
- rowsdower.y = max(rowsdower.y, field.miny)
- rowsdower.y = min(rowsdower.y, field.maxy-rowsdower.height)
+ if dx ~= 0 or dy ~= 0 then
+  move_character(rowsdower,dx,dy)
+ end
+end
+
+function move_character(character, dx, dy)
+ character.x += dx
+ character.y += dy
+ character.x = max(character.x, field.minx)
+ character.x = min(character.x, field.maxx-character.width)
+ character.y = max(character.y, field.miny)
+ character.y = min(character.y, field.maxy-character.height)
 end
 
 function init_level(level_number)
