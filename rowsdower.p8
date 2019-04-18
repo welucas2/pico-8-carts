@@ -25,6 +25,8 @@ function init_cultist()
  cultist.type = 'c'
  cultist.x = 100
  cultist.y = 100
+ cultist.width = 16
+ cultist.height = 16
  cultist.health = 20
  return cultist
 end
@@ -48,6 +50,21 @@ function move_rowsdower()
  end
  if dx ~= 0 or dy ~= 0 then
   move_character(rowsdower,dx,dy)
+ end
+end
+
+function move_enemies()
+ for i, enemy in pairs(enemies) do
+  local dxr = rowsdower.x - enemy.x
+  local dyr = rowsdower.y - enemy.y
+  local drowsdower = sqrt(dxr*dxr + dyr*dyr)
+  dxr = dxr / drowsdower
+  dyr = dyr / drowsdower
+  local dx = character_speed * dxr
+  local dy = character_speed * dyr
+  if dx ~= 0 or dy ~= 0 then
+    move_character(enemy,dx,dy)
+   end
  end
 end
 
@@ -75,6 +92,7 @@ end
 
 function _update()
  move_rowsdower()
+ move_enemies()
 end
 
 function _draw()
