@@ -20,11 +20,11 @@ enemies = {}
 sprite_ref = {}
 sprite_ref.c = 32
 
-function init_cultist()
+function init_cultist(x,y)
  cultist = {}
  cultist.type = 'c'
- cultist.x = 100
- cultist.y = 100
+ cultist.x = x
+ cultist.y = y
  cultist.width = 16
  cultist.height = 16
  cultist.health = 20
@@ -77,7 +77,7 @@ end
 
 function init_level(level_number)
  if level_number == 1 then
-  enemies[1] = init_cultist()
+  enemies[1] = init_cultist(100, 100)
  end
 end
 
