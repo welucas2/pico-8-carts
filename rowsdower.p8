@@ -64,7 +64,7 @@ function move_enemies()
   dy = character_speed * dy / drowsdower
   if dx ~= 0 or dy ~= 0 then
     move_character(enemy,dx,dy)
-   end
+  end
  end
 end
 
