@@ -28,6 +28,7 @@ function init_cultist(x,y)
  cultist.type = 'c'
  cultist.x = x
  cultist.y = y
+ cultist.distance = 0.001
  cultist.health = 20
  cultist.width = 16
  cultist.height = 16
@@ -75,13 +76,15 @@ function rowsdower_attack()
  end
 end
 
+--[[ This function moves enemies, and also updates the distance to them.
+     The distance is stored as it's needed for combat.]]
 function move_enemies()
  for i, enemy in pairs(enemies) do
   local dx = rowsdower.x - enemy.x
   local dy = rowsdower.y - enemy.y
-  local drowsdower = sqrt(dx*dx + dy*dy) + 0.001
-  dx = character_speed * dx / drowsdower
-  dy = character_speed * dy / drowsdower
+  enemy.distance = sqrt(dx*dx + dy*dy) + 0.001
+  dx = character_speed * dx / enemy.distance
+  dy = character_speed * dy / enemy.distance
   if dx ~= 0 or dy ~= 0 then
     move_character(enemy,dx,dy)
   end
