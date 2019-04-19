@@ -18,6 +18,7 @@ rowsdower.height = 16
 rowsdower.flip = false
 
 character_speed = 1
+ghook_range = 16
 
 enemies = {}
 sprite_ref = {}
@@ -62,7 +63,34 @@ function move_rowsdower()
  end
 end
 
+-- Return a character indicating the direction indicated by the
+-- vector (dx, dy).
+function calc_direction(dx, dy)
+ local angle = atan2(dx, dy)
+ if (angle > 0.125 and angle <= 0.375) then
+  return 'd'
+ elseif (angle > 0.375 and angle <= 0.625) then
+  return 'l'
+ elseif (angle > 0.625 and angle <= 0.875) then
+  return 'u'
+ else
+  return 'r'
+ end
+end
+
 function rowsdower_ghook()
+ local r_x = rowsdower.x + rowsdower.width / 2
+ local r_y = rowsdower.y + rowsdower.height / 2
+ for i, enemy in pairs(enemies) do
+  if enemy.distance <= ghook_range then
+   -- If the enemy's in front of Rowsdower
+   local dx = r_x - enemy.x - enemy.width / 2
+   local dy = r_y - enemy.y - enemy.height / 2
+   if calc_direction(dx,dy) == rowsdower.facing then
+     enemy.health -= 2
+   end
+  end
+ end
 end
 
 function rowsdower_gun()
@@ -123,13 +151,15 @@ end
 function _update()
  move_rowsdower()
  move_enemies()
+ rowsdower_attack()
 end
 
 function _draw()
  cls()
  rectfill(field.minx, field.miny, field.maxx, field.maxy, 3)
  rectfill(0, 121, 128, 128, 0)
- print('fight, rowsdower!', 2, 122, 12)
+--  print('fight, rowsdower!', 2, 122, 12)
+ print('enemy health '..enemies[1].health, 2, 122, 12) 
  spr(0,rowsdower.x,rowsdower.y,2,2,rowsdower.flip)
  draw_enemies()
 end
