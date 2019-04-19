@@ -11,6 +11,7 @@ field.maxy = 120
 rowsdower = {}
 rowsdower.x = 20
 rowsdower.y = 20
+rowsdower.facing = 'd'
 rowsdower.health = 100
 rowsdower.width = 16
 rowsdower.height = 16
@@ -44,12 +45,16 @@ function move_rowsdower()
  local dx, dy = 0, 0
  if btn(0) then
   dx = -character_speed
+  rowsdower.facing = 'l'
  elseif btn(1) then
   dx = character_speed
+  rowsdower.facing = 'r'
  elseif btn(2) then
   dy = -character_speed
+  rowsdower.facing = 'u'
  elseif btn(3) then
   dy = character_speed
+  rowsdower.facing = 'd'
  end
  if dx ~= 0 or dy ~= 0 then
   move_character(rowsdower,dx,dy)
