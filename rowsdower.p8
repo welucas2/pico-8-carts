@@ -11,6 +11,7 @@ field.maxy = 120
 rowsdower = {}
 rowsdower.x = 20
 rowsdower.y = 20
+rowsdower.health = 100
 rowsdower.width = 16
 rowsdower.height = 16
 rowsdower.flip = false
@@ -26,10 +27,10 @@ function init_cultist(x,y)
  cultist.type = 'c'
  cultist.x = x
  cultist.y = y
- cultist.flip = false
+ cultist.health = 20
  cultist.width = 16
  cultist.height = 16
- cultist.health = 20
+ cultist.flip = false
  return cultist
 end
 
