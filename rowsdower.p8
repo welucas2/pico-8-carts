@@ -56,6 +56,20 @@ function move_rowsdower()
  end
 end
 
+function rowsdower_ghook()
+end
+
+function rowsdower_gun()
+end
+
+function rowsdower_attack()
+ if btnp(4) then
+  rowsdower_ghook()
+ elseif btnp(5) then
+  rowsdower_gun()
+ end
+end
+
 function move_enemies()
  for i, enemy in pairs(enemies) do
   local dx = rowsdower.x - enemy.x
