@@ -108,13 +108,15 @@ end
      The distance is stored as it's needed for combat.]]
 function move_enemies()
  for i, enemy in pairs(enemies) do
-  local dx = rowsdower.x - enemy.x
-  local dy = rowsdower.y - enemy.y
+  local dx = rowsdower.x + rowsdower.width / 2 - enemy.x - enemy.width / 2
+  local dy = rowsdower.y + rowsdower.width / 2 - enemy.y - enemy.height / 2
   enemy.distance = sqrt(dx*dx + dy*dy) + 0.001
-  dx = character_speed * dx / enemy.distance
-  dy = character_speed * dy / enemy.distance
-  if dx ~= 0 or dy ~= 0 then
-    move_character(enemy,dx,dy)
+  if enemy.distance > rowsdower.width then
+   dx = character_speed * dx / enemy.distance
+   dy = character_speed * dy / enemy.distance
+   if dx ~= 0 or dy ~= 0 then
+     move_character(enemy,dx,dy)
+   end
   end
  end
 end
