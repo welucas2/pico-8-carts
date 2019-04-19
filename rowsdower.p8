@@ -70,11 +70,11 @@ function calc_direction(dx, dy)
  if (angle > 0.125 and angle <= 0.375) then
   return 'd'
  elseif (angle > 0.375 and angle <= 0.625) then
-  return 'l'
+  return 'r'
  elseif (angle > 0.625 and angle <= 0.875) then
   return 'u'
  else
-  return 'r'
+  return 'l'
  end
 end
 
