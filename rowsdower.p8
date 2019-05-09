@@ -21,6 +21,8 @@ character_speed = 1
 ghook_range = 16
 gun_range = 50
 gun_spread = 1/6
+gun_min_arc = 0
+gun_max_arc = 0
 
 enemies = {}
 sprite_ref = {}
@@ -133,22 +135,20 @@ function rowsdower_gun()
  else
   aim_angle = rnd(1)
  end
- local min_spread = aim_angle - gun_spread / 2
- local max_spread = aim_angle + gun_spread / 2
---  min_spread = min_spread - floor(min_spread) --remove fractional parts
---  max_spread = max_spread - floor(max_spread)
+ gun_min_arc = aim_angle - gun_spread / 2
+ gun_max_arc = aim_angle + gun_spread / 2
  --Loop over enemies and damage those who are within the gun's spread and range.
  for i, enemy in pairs(enemies) do
   if enemy.distance <= gun_range then
    local dx = r_x - enemy.x - enemy.width / 2
    local dy = r_y - enemy.y - enemy.height / 2
    local enemy_angle = atan2(dx, dy)
-   if min_spread < max_spread then
-    if min_spread <= enemy_angle and enemy_angle <= max_spread then
+   if gun_min_arc < gun_max_arc then
+    if gun_min_arc <= enemy_angle and enemy_angle <= gun_max_arc then
      enemy.health -= 10
     end
    else
-    if min_spread <= enemy_angle and enemy_angle <= max_spread then
+    if gun_min_arc <= enemy_angle and enemy_angle <= gun_max_arc then
      enemy.health -= 10
     end
    end
