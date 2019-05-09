@@ -97,7 +97,7 @@ function rowsdower_ghook()
  end
 end
 
-function rowsdower_gun()
+function rowsdower_gun_arc_calc()
  local i_closest, r_closest = 0, 10000
  local i_second_closest, r_second_closest = 0, 10001
  -- Determine the two nearest enemies.
@@ -137,7 +137,9 @@ function rowsdower_gun()
  end
  gun_min_arc = aim_angle - gun_spread / 2
  gun_max_arc = aim_angle + gun_spread / 2
- --Loop over enemies and damage those who are within the gun's spread and range.
+end
+
+function rowsdower_gun_fire()
  for i, enemy in pairs(enemies) do
   if enemy.distance <= gun_range then
    local dx = r_x - enemy.x - enemy.width / 2
@@ -157,10 +159,11 @@ function rowsdower_gun()
 end
 
 function rowsdower_attack()
+ rowsdower_gun_arc_calc()
  if btnp(4) then
   rowsdower_ghook()
  elseif btnp(5) then
-  rowsdower_gun()
+  rowsdower_gun_fire()
  end
 end
 
