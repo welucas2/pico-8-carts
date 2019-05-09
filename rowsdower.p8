@@ -19,6 +19,8 @@ rowsdower.flip = false
 
 character_speed = 1
 ghook_range = 16
+gun_range = 50
+gun_spread = 1/6
 
 enemies = {}
 sprite_ref = {}
@@ -94,6 +96,62 @@ function rowsdower_ghook()
 end
 
 function rowsdower_gun()
+ local i_closest, r_closest = 0, 10000
+ local i_second_closest, r_second_closest = 0, 10001
+ -- Determine the two nearest enemies.
+ -- Could do this inside move_enemies()?
+ for i, enemy in pairs(enemies) do
+  if enemy.distance <= r_second_closest then
+   if enemy.distance <= r_closest then
+    i_second_closest = i_closest
+    r_second_closest = r_closest
+    i_closest = i
+    r_closest = enemy.distance
+   else
+    i_second_closest = i
+    i_second_closest = enemy.distance
+   end
+  end
+ end
+ --If two+ enemies, aim between the two closest. If one, aim directly. If none, random.
+ local aim_angle
+ if i_closest > 0 then
+  local dx = rowsdower.x + rowsdower.width / 2 - enemies[i_closest].x - enemies[i_closest].width / 2
+  local dy = rowsdower.y + rowsdower.width / 2 - enemies[i_closest].y - enemies[i_closest].height / 2
+  local angle_closest = atan2(dx, dy)
+  local angle_second_closest
+  if i_second_closest > 0 then
+   dx = rowsdower.x + rowsdower.width / 2 - enemies[i_second_closest].x - enemies[i_second_closest].width / 2
+   dy = rowsdower.y + rowsdower.width / 2 - enemies[i_second_closest].y - enemies[i_second_closest].height / 2
+   angle_second_closest = atan2(dx, dy)
+  else
+   angle_second_closest = angle_closest
+  end
+  aim_angle = (angle_closest + angle_second_closest) / 2
+ else
+  aim_angle = rnd(1)
+ end
+ local min_spread = aim_angle - gun_spread / 2
+ local max_spread = aim_angle + gun_spread / 2
+--  min_spread = min_spread - floor(min_spread) --remove fractional parts
+--  max_spread = max_spread - floor(max_spread)
+ --Loop over enemies and damage those who are within the gun's spread and range.
+ local r_x = rowsdower.x + rowsdower.width / 2
+ local r_y = rowsdower.y + rowsdower.height / 2
+ for i, enemy in pairs(enemies) do
+  local dx = r_x - enemy.x - enemy.width / 2
+  local dy = r_y - enemy.y - enemy.height / 2
+  local enemy_angle = atan2(dx, dy)
+  if min_spread < max_spread then
+   if min_spread <= enemy_angle and enemy_angle <= max_spread then
+    enemy.health -= 10
+   end
+  else
+   if min_spread <= enemy_angle and enemy_angle <= max_spread then
+    enemy.health -= 10
+   end
+  end
+ end
 end
 
 function rowsdower_attack()
