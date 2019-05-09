@@ -114,15 +114,17 @@ function rowsdower_gun()
   end
  end
  --If two+ enemies, aim between the two closest. If one, aim directly. If none, random.
+ local r_x = rowsdower.x + rowsdower.width / 2
+ local r_y = rowsdower.y + rowsdower.height / 2
  local aim_angle
  if i_closest > 0 then
-  local dx = rowsdower.x + rowsdower.width / 2 - enemies[i_closest].x - enemies[i_closest].width / 2
-  local dy = rowsdower.y + rowsdower.width / 2 - enemies[i_closest].y - enemies[i_closest].height / 2
+  local dx = r_x - enemies[i_closest].x - enemies[i_closest].width / 2
+  local dy = r_y - enemies[i_closest].y - enemies[i_closest].height / 2
   local angle_closest = atan2(dx, dy)
   local angle_second_closest
   if i_second_closest > 0 then
-   dx = rowsdower.x + rowsdower.width / 2 - enemies[i_second_closest].x - enemies[i_second_closest].width / 2
-   dy = rowsdower.y + rowsdower.width / 2 - enemies[i_second_closest].y - enemies[i_second_closest].height / 2
+   dx = r_x - enemies[i_second_closest].x - enemies[i_second_closest].width / 2
+   dy = r_y - enemies[i_second_closest].y - enemies[i_second_closest].height / 2
    angle_second_closest = atan2(dx, dy)
   else
    angle_second_closest = angle_closest
@@ -136,19 +138,19 @@ function rowsdower_gun()
 --  min_spread = min_spread - floor(min_spread) --remove fractional parts
 --  max_spread = max_spread - floor(max_spread)
  --Loop over enemies and damage those who are within the gun's spread and range.
- local r_x = rowsdower.x + rowsdower.width / 2
- local r_y = rowsdower.y + rowsdower.height / 2
  for i, enemy in pairs(enemies) do
-  local dx = r_x - enemy.x - enemy.width / 2
-  local dy = r_y - enemy.y - enemy.height / 2
-  local enemy_angle = atan2(dx, dy)
-  if min_spread < max_spread then
-   if min_spread <= enemy_angle and enemy_angle <= max_spread then
-    enemy.health -= 10
-   end
-  else
-   if min_spread <= enemy_angle and enemy_angle <= max_spread then
-    enemy.health -= 10
+  if enemy.distance <= gun_range then
+   local dx = r_x - enemy.x - enemy.width / 2
+   local dy = r_y - enemy.y - enemy.height / 2
+   local enemy_angle = atan2(dx, dy)
+   if min_spread < max_spread then
+    if min_spread <= enemy_angle and enemy_angle <= max_spread then
+     enemy.health -= 10
+    end
+   else
+    if min_spread <= enemy_angle and enemy_angle <= max_spread then
+     enemy.health -= 10
+    end
    end
   end
  end
