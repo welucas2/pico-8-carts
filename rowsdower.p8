@@ -197,6 +197,17 @@ function move_character(character, dx, dy)
  end
 end
 
+function draw_gun_arc()
+ local r_x = rowsdower.x + rowsdower.width / 2
+ local r_y = rowsdower.y + rowsdower.height / 2
+ dx = 128 * cos(gun_min_arc)
+ dy = 128 * sin(gun_min_arc)
+ line(r_x, r_y, r_x+dx, r_y+dy, 10)
+ dx = 128 * cos(gun_max_arc)
+ dy = 128 * sin(gun_max_arc)
+ line(r_x, r_y, r_x+dx, r_y+dy, 10)
+end
+
 function init_level(level_number)
  if level_number == 1 then
   enemies[1] = init_cultist(100, 100)
@@ -219,11 +230,12 @@ end
 function _draw()
  cls()
  rectfill(field.minx, field.miny, field.maxx, field.maxy, 3)
- rectfill(0, 121, 128, 128, 0)
---  print('fight, rowsdower!', 2, 122, 12)
- print('enemy health '..enemies[1].health, 2, 122, 12) 
  spr(0,rowsdower.x,rowsdower.y,2,2,rowsdower.flip)
  draw_enemies()
+ draw_gun_arc()
+ rectfill(0, 121, 128, 128, 0)
+ --  print('fight, rowsdower!', 2, 122, 12)
+ print('enemy health '..enemies[1].health, 2, 122, 12) 
 end
 
 __gfx__
