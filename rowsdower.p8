@@ -97,7 +97,7 @@ function rowsdower_ghook()
  end
 end
 
-function rowsdower_gun_arc_calc()
+function rowsdower_gun_update()
  local i_closest, r_closest = 0, 10000
  local i_second_closest, r_second_closest = 0, 10001
  -- Determine the two nearest enemies.
@@ -159,7 +159,6 @@ function rowsdower_gun_fire()
 end
 
 function rowsdower_attack()
- rowsdower_gun_arc_calc()
  if btnp(4) then
   rowsdower_ghook()
  elseif btnp(5) then
@@ -227,6 +226,7 @@ end
 function _update()
  move_rowsdower()
  move_enemies()
+ rowsdower_gun_update()
  rowsdower_attack()
 end
 
