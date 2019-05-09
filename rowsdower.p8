@@ -169,7 +169,7 @@ end
 function move_enemies()
  for i, enemy in pairs(enemies) do
   local dx = rowsdower.x + rowsdower.width / 2 - enemy.x - enemy.width / 2
-  local dy = rowsdower.y + rowsdower.width / 2 - enemy.y - enemy.height / 2
+  local dy = rowsdower.y + rowsdower.height / 2 - enemy.y - enemy.height / 2
   enemy.distance = sqrt(dx*dx + dy*dy) + 0.001
   if enemy.distance > rowsdower.width then
    dx = character_speed * dx / enemy.distance
