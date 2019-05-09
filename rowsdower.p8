@@ -120,13 +120,13 @@ function rowsdower_gun_update()
  local r_y = rowsdower.y + rowsdower.height / 2
  local aim_angle
  if i_closest > 0 then
-  local dx = r_x - enemies[i_closest].x - enemies[i_closest].width / 2
-  local dy = r_y - enemies[i_closest].y - enemies[i_closest].height / 2
+  local dx = enemies[i_closest].x + enemies[i_closest].width / 2 - r_x
+  local dy = enemies[i_closest].y + enemies[i_closest].height / 2 - r_y
   local angle_closest = atan2(dx, dy)
   local angle_second_closest
   if i_second_closest > 0 then
-   dx = r_x - enemies[i_second_closest].x - enemies[i_second_closest].width / 2
-   dy = r_y - enemies[i_second_closest].y - enemies[i_second_closest].height / 2
+   dx = enemies[i_second_closest].x + enemies[i_second_closest].width / 2 - r_x
+   dy = enemies[i_second_closest].y + enemies[i_second_closest].height / 2 - r_y
    angle_second_closest = atan2(dx, dy)
   else
    angle_second_closest = angle_closest
@@ -238,7 +238,8 @@ function _draw()
  draw_gun_arc()
  rectfill(0, 121, 128, 128, 0)
  --  print('fight, rowsdower!', 2, 122, 12)
- print('enemy health '..enemies[1].health, 2, 122, 12) 
+ -- print('enemy health '..enemies[1].health, 2, 122, 12) 
+ print(gun_min_arc..'   '..gun_max_arc, 2, 122, 12) 
 end
 
 __gfx__
