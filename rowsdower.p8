@@ -11,12 +11,20 @@ field.maxy = 120
 rowsdower = {}
 rowsdower.x = 20
 rowsdower.y = 20
+rowsdower.facing = 'd'
 rowsdower.health = 100
 rowsdower.width = 16
 rowsdower.height = 16
 rowsdower.flip = false
 
 character_speed = 1
+ghook_range = 16
+gun_range = 50
+gun_spread = 1/6
+gun_min_arc = 0
+gun_max_arc = 0
+gun_reload_time = 5
+gun_last_fired = 0
 
 enemies = {}
 sprite_ref = {}
@@ -27,6 +35,7 @@ function init_cultist(x,y)
  cultist.type = 'c'
  cultist.x = x
  cultist.y = y
+ cultist.distance = 0.001
  cultist.health = 20
  cultist.width = 16
  cultist.height = 16
@@ -44,27 +53,138 @@ function move_rowsdower()
  local dx, dy = 0, 0
  if btn(0) then
   dx = -character_speed
+  rowsdower.facing = 'l'
  elseif btn(1) then
   dx = character_speed
+  rowsdower.facing = 'r'
  elseif btn(2) then
   dy = -character_speed
+  rowsdower.facing = 'u'
  elseif btn(3) then
   dy = character_speed
+  rowsdower.facing = 'd'
  end
  if dx ~= 0 or dy ~= 0 then
   move_character(rowsdower,dx,dy)
  end
 end
 
+-- Return a character indicating the direction indicated by the
+-- vector (dx, dy).
+function calc_direction(dx, dy)
+ local angle = atan2(dx, dy)
+ if (angle > 0.125 and angle <= 0.375) then
+  return 'd'
+ elseif (angle > 0.375 and angle <= 0.625) then
+  return 'r'
+ elseif (angle > 0.625 and angle <= 0.875) then
+  return 'u'
+ else
+  return 'l'
+ end
+end
+
+function rowsdower_ghook()
+ local r_x = rowsdower.x + rowsdower.width / 2
+ local r_y = rowsdower.y + rowsdower.height / 2
+ for i, enemy in pairs(enemies) do
+  if enemy.distance <= ghook_range then
+   -- If the enemy's in front of Rowsdower
+   local dx = r_x - enemy.x - enemy.width / 2
+   local dy = r_y - enemy.y - enemy.height / 2
+   if calc_direction(dx,dy) == rowsdower.facing then
+     enemy.health -= 2
+   end
+  end
+ end
+end
+
+function rowsdower_gun_update()
+ local i_closest, r_closest = 0, 10000
+ local i_second_closest, r_second_closest = 0, 10001
+ -- Determine the two nearest enemies.
+ -- Could do this inside move_enemies()?
+ for i, enemy in pairs(enemies) do
+  if enemy.distance <= r_second_closest then
+   if enemy.distance <= r_closest then
+    i_second_closest = i_closest
+    r_second_closest = r_closest
+    i_closest = i
+    r_closest = enemy.distance
+   else
+    i_second_closest = i
+    r_second_closest = enemy.distance
+   end
+  end
+ end
+ --If two+ enemies, aim between the two closest. If one, aim directly. If none, random.
+ local r_x = rowsdower.x + rowsdower.width / 2
+ local r_y = rowsdower.y + rowsdower.height / 2
+ local aim_angle
+ if i_closest > 0 then
+  local dx = enemies[i_closest].x + enemies[i_closest].width / 2 - r_x
+  local dy = enemies[i_closest].y + enemies[i_closest].height / 2 - r_y
+  local angle_closest = atan2(dx, dy)
+  local angle_second_closest
+  if i_second_closest > 0 then
+   dx = enemies[i_second_closest].x + enemies[i_second_closest].width / 2 - r_x
+   dy = enemies[i_second_closest].y + enemies[i_second_closest].height / 2 - r_y
+   angle_second_closest = atan2(dx, dy)
+  else
+   angle_second_closest = angle_closest
+  end
+  -- ~ the angle of the average of the two unit vectors given by angle_closest and second_closest.
+  aim_angle = atan2(cos(angle_closest)+cos(angle_second_closest), sin(angle_closest)+sin(angle_second_closest))
+ else
+  aim_angle = rnd(1)
+ end
+ gun_min_arc = aim_angle - gun_spread / 2
+ gun_max_arc = aim_angle + gun_spread / 2
+end
+
+function rowsdower_gun_fire()
+ local r_x = rowsdower.x + rowsdower.width / 2
+ local r_y = rowsdower.y + rowsdower.height / 2
+ for i, enemy in pairs(enemies) do
+  if enemy.distance <= gun_range then
+   local dx = enemy.x + enemy.width / 2 - r_x
+   local dy = enemy.y + enemy.height / 2 - r_y
+   local enemy_angle = atan2(dx, dy)
+   if gun_min_arc < gun_max_arc then
+    if gun_min_arc <= enemy_angle and enemy_angle <= gun_max_arc then
+     enemy.health -= 10
+    end
+   else
+    if gun_min_arc <= enemy_angle and enemy_angle <= gun_max_arc then
+     enemy.health -= 10
+    end
+   end
+  end
+ end
+end
+
+function rowsdower_attack()
+ if btnp(4) then
+  rowsdower_ghook()
+ elseif btnp(5) and (time() - gun_last_fired) >= gun_reload_time then
+  gun_last_fired = time()
+  rowsdower_gun_fire()
+ end
+end
+
+--[[ This function moves enemies, and also updates the distance to them.
+     The distance is stored as it's needed for combat.]]
 function move_enemies()
  for i, enemy in pairs(enemies) do
-  local dx = rowsdower.x - enemy.x
-  local dy = rowsdower.y - enemy.y
-  local drowsdower = sqrt(dx*dx + dy*dy) + 0.001
-  dx = character_speed * dx / drowsdower
-  dy = character_speed * dy / drowsdower
-  if dx ~= 0 or dy ~= 0 then
-    move_character(enemy,dx,dy)
+  local dx = rowsdower.x + rowsdower.width / 2 - enemy.x - enemy.width / 2
+  local dy = rowsdower.y + rowsdower.height / 2 - enemy.y - enemy.height / 2
+  enemy.distance = sqrt(dx*dx + dy*dy) + 0.001
+  if enemy.distance > rowsdower.width then
+   dx = character_speed * dx / enemy.distance
+   dy = character_speed * dy / enemy.distance
+  --  if dx ~= 0 or dy ~= 0 then
+  --    move_character(enemy,dx,dy)
+  --  end
   end
  end
 end
@@ -85,9 +205,31 @@ function move_character(character, dx, dy)
  end
 end
 
+function draw_gun_arc()
+ if (time() - gun_last_fired) >= gun_reload_time then
+  local r_x = rowsdower.x + rowsdower.width / 2
+  local r_y = rowsdower.y + rowsdower.height / 2
+  dx = 181 * cos(gun_min_arc)
+  dy = 181 * sin(gun_min_arc)
+  line(r_x, r_y, r_x+dx, r_y+dy, 10)
+  dx = 181 * cos(gun_max_arc)
+  dy = 181 * sin(gun_max_arc)
+  line(r_x, r_y, r_x+dx, r_y+dy, 10)
+ end
+end
+
+function draw_gun_reload_box()
+ rectfill(100, 122, 127, 127, 9)
+ rectfill(100, 122, 100+min(27,27*(time()-gun_last_fired)/gun_reload_time), 127, 8)
+ print('gun', 115, 122, 7)
+end
+
 function init_level(level_number)
  if level_number == 1 then
   enemies[1] = init_cultist(100, 100)
+  enemies[2] = init_cultist(10, 10)
+  enemies[3] = init_cultist(100, 10)
+  gun_last_fired = time()
  end
 end
 
@@ -101,15 +243,21 @@ end
 function _update()
  move_rowsdower()
  move_enemies()
+ rowsdower_gun_update()
+ rowsdower_attack()
 end
 
 function _draw()
  cls()
  rectfill(field.minx, field.miny, field.maxx, field.maxy, 3)
- rectfill(0, 121, 128, 128, 0)
- print('fight, rowsdower!', 2, 122, 12)
  spr(0,rowsdower.x,rowsdower.y,2,2,rowsdower.flip)
  draw_enemies()
+ draw_gun_arc()
+ rectfill(0, 121, 128, 128, 0)
+ --  print('fight, rowsdower!', 2, 122, 12)
+ print('enemy health '..enemies[1].health, 2, 122, 12) 
+--  print(gun_min_arc..'   '..gun_max_arc, 2, 122, 12) 
+ draw_gun_reload_box()
 end
 
 __gfx__
