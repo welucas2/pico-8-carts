@@ -218,6 +218,12 @@ function draw_gun_arc()
  end
 end
 
+function draw_gun_reload_box()
+ rectfill(100, 122, 127, 127, 9)
+ rectfill(100, 122, 100+min(27,27*(time()-gun_last_fired)/gun_reload_time), 127, 8)
+ print('gun', 115, 122, 7)
+end
+
 function init_level(level_number)
  if level_number == 1 then
   enemies[1] = init_cultist(100, 100)
@@ -251,6 +257,7 @@ function _draw()
  --  print('fight, rowsdower!', 2, 122, 12)
  print('enemy health '..enemies[1].health, 2, 122, 12) 
 --  print(gun_min_arc..'   '..gun_max_arc, 2, 122, 12) 
+ draw_gun_reload_box()
 end
 
 __gfx__
