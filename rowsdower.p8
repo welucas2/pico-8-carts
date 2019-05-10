@@ -131,7 +131,8 @@ function rowsdower_gun_update()
   else
    angle_second_closest = angle_closest
   end
-  aim_angle = (angle_closest + angle_second_closest) / 2
+  -- ~ the angle of the average of the two unit vectors given by angle_closest and second_closest.
+  aim_angle = atan2(cos(angle_closest)+cos(angle_second_closest), sin(angle_closest)+sin(angle_second_closest))
  else
   aim_angle = rnd(1)
  end
@@ -202,17 +203,19 @@ end
 function draw_gun_arc()
  local r_x = rowsdower.x + rowsdower.width / 2
  local r_y = rowsdower.y + rowsdower.height / 2
- dx = 128 * cos(gun_min_arc)
- dy = 128 * sin(gun_min_arc)
+ dx = 181 * cos(gun_min_arc)
+ dy = 181 * sin(gun_min_arc)
  line(r_x, r_y, r_x+dx, r_y+dy, 10)
- dx = 128 * cos(gun_max_arc)
- dy = 128 * sin(gun_max_arc)
+ dx = 181 * cos(gun_max_arc)
+ dy = 181 * sin(gun_max_arc)
  line(r_x, r_y, r_x+dx, r_y+dy, 10)
 end
 
 function init_level(level_number)
  if level_number == 1 then
   enemies[1] = init_cultist(100, 100)
+  enemies[2] = init_cultist(10, 10)
+  enemies[3] = init_cultist(100, 10)
  end
 end
 
