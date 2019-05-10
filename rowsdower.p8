@@ -23,6 +23,8 @@ gun_range = 50
 gun_spread = 1/6
 gun_min_arc = 0
 gun_max_arc = 0
+gun_reload_time = 5
+gun_last_fired = 0
 
 enemies = {}
 sprite_ref = {}
@@ -164,7 +166,8 @@ end
 function rowsdower_attack()
  if btnp(4) then
   rowsdower_ghook()
- elseif btnp(5) then
+ elseif btnp(5) and (time() - gun_last_fired) >= gun_reload_time then
+  gun_last_fired = time()
   rowsdower_gun_fire()
  end
 end
@@ -203,14 +206,16 @@ function move_character(character, dx, dy)
 end
 
 function draw_gun_arc()
- local r_x = rowsdower.x + rowsdower.width / 2
- local r_y = rowsdower.y + rowsdower.height / 2
- dx = 181 * cos(gun_min_arc)
- dy = 181 * sin(gun_min_arc)
- line(r_x, r_y, r_x+dx, r_y+dy, 10)
- dx = 181 * cos(gun_max_arc)
- dy = 181 * sin(gun_max_arc)
- line(r_x, r_y, r_x+dx, r_y+dy, 10)
+ if (time() - gun_last_fired) >= gun_reload_time then
+  local r_x = rowsdower.x + rowsdower.width / 2
+  local r_y = rowsdower.y + rowsdower.height / 2
+  dx = 181 * cos(gun_min_arc)
+  dy = 181 * sin(gun_min_arc)
+  line(r_x, r_y, r_x+dx, r_y+dy, 10)
+  dx = 181 * cos(gun_max_arc)
+  dy = 181 * sin(gun_max_arc)
+  line(r_x, r_y, r_x+dx, r_y+dy, 10)
+ end
 end
 
 function init_level(level_number)
@@ -218,6 +223,7 @@ function init_level(level_number)
   enemies[1] = init_cultist(100, 100)
   enemies[2] = init_cultist(10, 10)
   enemies[3] = init_cultist(100, 10)
+  gun_last_fired = time()
  end
 end
 
