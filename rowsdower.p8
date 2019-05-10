@@ -141,10 +141,12 @@ function rowsdower_gun_update()
 end
 
 function rowsdower_gun_fire()
+ local r_x = rowsdower.x + rowsdower.width / 2
+ local r_y = rowsdower.y + rowsdower.height / 2
  for i, enemy in pairs(enemies) do
   if enemy.distance <= gun_range then
-   local dx = r_x - enemy.x - enemy.width / 2
-   local dy = r_y - enemy.y - enemy.height / 2
+   local dx = enemy.x + enemy.width / 2 - r_x
+   local dy = enemy.y + enemy.height / 2 - r_y
    local enemy_angle = atan2(dx, dy)
    if gun_min_arc < gun_max_arc then
     if gun_min_arc <= enemy_angle and enemy_angle <= gun_max_arc then
@@ -177,9 +179,9 @@ function move_enemies()
   if enemy.distance > rowsdower.width then
    dx = character_speed * dx / enemy.distance
    dy = character_speed * dy / enemy.distance
-   if dx ~= 0 or dy ~= 0 then
-     move_character(enemy,dx,dy)
-   end
+  --  if dx ~= 0 or dy ~= 0 then
+  --    move_character(enemy,dx,dy)
+  --  end
   end
  end
 end
@@ -241,8 +243,8 @@ function _draw()
  draw_gun_arc()
  rectfill(0, 121, 128, 128, 0)
  --  print('fight, rowsdower!', 2, 122, 12)
- -- print('enemy health '..enemies[1].health, 2, 122, 12) 
- print(gun_min_arc..'   '..gun_max_arc, 2, 122, 12) 
+ print('enemy health '..enemies[1].health, 2, 122, 12) 
+--  print(gun_min_arc..'   '..gun_max_arc, 2, 122, 12) 
 end
 
 __gfx__
