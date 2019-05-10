@@ -111,7 +111,7 @@ function rowsdower_gun_update()
     r_closest = enemy.distance
    else
     i_second_closest = i
-    i_second_closest = enemy.distance
+    r_second_closest = enemy.distance
    end
   end
  end
